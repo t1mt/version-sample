@@ -1,6 +1,5 @@
 
-tag = $(shell git describe --dirty --always --tags | sed 's/-/./2' | sed 's/-/./2')
-GIT_VERSION = $(if $(word 2, $(subst -g, ,$(tag))), $(tag), "1.0.0")
+GIT_VERSION ?= $(shell git describe --dirty --always --tags | sed 's/-/./2' | sed 's/-/./2')
 GIT_COMMIT  = $(shell git rev-parse HEAD)
 BUILD_DATE  = $(shell date +"%Y-%m-%dT%H:%m:%SZ")
 GO_MODULE   = $(word 2, $(shell grep -m 1 . go.mod) )
