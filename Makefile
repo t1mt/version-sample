@@ -1,16 +1,16 @@
 
-GIT_VERSION  = "v1.0.0"
-GIT_COMMIT   = $(shell git rev-parse HEAD)
-BUILD_DATE   = $(shell date +"%Y-%m-%dT%H:%m:%SZ")
-
-GO_MODULE = $(or $(word 2, $(shell grep -m 1 . go.mod)),$(value 2) )
+GIT_VERSION = "v1.0.0"
+GIT_COMMIT  = $(shell git rev-parse HEAD)
+BUILD_DATE  = $(shell date +"%Y-%m-%dT%H:%m:%SZ")
+GO_MODULE   = $(word 2, $(shell grep -m 1 . go.mod) )
+GO_LDFLAGS  = -X '$(GO_MODULE)/version.GitVersion=$(GIT_VERSION)' -X '$(GO_MODULE)/version.GitCommit=$(GIT_COMMIT)' -X '$(GO_MODULE)/version.BuildDate=$(BUILD_DATE)'
 
 ## command
-GO           = go
-GO_VENDOR    = go mod
-MKDIR_P      = mkdir -p
+GO         = go
+GO_VENDOR  = go mod
 
-EXE = sample
+MKDIR_P = mkdir -p
+CMD = sample
 
 ################################################
 all: test build run clean
@@ -26,16 +26,16 @@ test:
 .PHONY: build
 build:
 	@echo "=========================="
-	GO111MODULE=on $(GO) build -mod=vendor -v -o $(EXE) \
-	-ldflags "-X '$(GO_MODULE)/version.GitVersion=$(GIT_VERSION)' -X '$(GO_MODULE)/version.GitCommit=$(GIT_COMMIT)' \
-	-X '$(GO_MODULE)/version.BuildDate=$(BUILD_DATE)'" \
+	GO111MODULE=on $(GO) build -mod=vendor -v -o $(CMD) \
+	-ldflags "$(GO_LDFLAGS)" \
 	./example/...
 
 .PHONY: run
 run:
 	@echo "=========================="
-	@ ./${EXE}
+	./${CMD}
 
 .PHONY: clean
 clean:
-	@rm -rf ./${EXE}
+	@echo "=========================="
+	rm -rf ./${CMD}
